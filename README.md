@@ -1,2 +1,3 @@
-# timestamp
-Simple command line tool to interpret UNIX timestamps
+# *Too many Timestamps*
+
+Simple command line tool to interpret and convert UNIX timestamps
