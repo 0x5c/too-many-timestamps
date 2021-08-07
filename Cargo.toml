@@ -6,6 +6,7 @@ edition = "2018"
 
 [[bin]]
 name = "timestamps"
+path = "src/timestamps.rs"
 
 [dependencies]
 chrono = "0.4"

@@ -1,4 +1,4 @@
-#![allow(uncommon_codepoints)]
+#![allow(dead_code)]
 
 use core::panic;
 use std::convert::TryInto;
@@ -11,7 +11,7 @@ use chrono::{
     naive::NaiveDateTime,
 };
 
-use too_many_timestamps::printit;
+mod printit;
 
 fn main() {
     let current_time_at_start = Utc::now();
@@ -41,8 +41,8 @@ fn main() {
                             .get_matches();
     
     
-    let ts: i64 = 789456123;
-    let _it = printit::InputType::M;
+    let ts: i64 = 1;
+    let _it = printit::InputType::S;
     let source = printit::TimeSource::Input(_it);
 
     let dt = match &source {

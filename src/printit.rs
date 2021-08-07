@@ -51,6 +51,6 @@ pub fn print_timestamp(time: DateTime<Utc>, source: TimeSource) {
     print!("{}", "Unix timestamp: ".dark_cyan());
     println!("{}", time.timestamp().to_string().blue());
 
-    print!("{}", "Unix ts. with millis: ".dark_cyan());
-    println!("{}", time.timestamp_millis().to_string().blue());
+    print!("{}", "Unix ts. with nanos: ".dark_cyan());
+    println!("{}", time.timestamp_nanos().to_string().blue());
 }
