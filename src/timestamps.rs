@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use core::panic;
-use std::convert::TryInto;
+use std::{convert::TryInto, num::ParseIntError};
 
 use clap::{App, Arg, AppSettings};
 
@@ -20,28 +20,64 @@ fn main() {
                             .version(clap::crate_version!())
                             .author(clap::crate_authors!(", "))
                             .about(clap::crate_description!())
-                            .after_help("Copyright 2021 0x5c\nReleased under the BSD-3-Clause licence.\n")
+                            .after_help("Copyright 2021 0x5c\nReleased under the BSD-3-Clause licence.")
                             .setting(AppSettings::ColoredHelp)
-                            .arg(clap::Arg::with_name("type")
-                                .short("t")
-                                .long("type")
-                                .value_name("TYPE")
-                                .help("Specifies the type of timestamp to interpret the input as.")
-                                .takes_value(true))
+                            .setting(AppSettings::AllArgsOverrideSelf)
+                            .setting(AppSettings::DeriveDisplayOrder)
+                            .arg(clap::Arg::with_name("tryall")
+                                .short("A")
+                                .long("try-all")
+                                .help("Try all input types")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("seconds")
+                                .short("S")
+                                .long("seconds")
+                                .help("Interpret input as seconds")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("milliseconds")
+                                .short("M")
+                                .long("milliseconds")
+                                .help("Interpret input as milliseconds")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("microseconds")
+                                .short("U")
+                                .long("microseconds")
+                                .help("Interpret input as microseconds")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("nanoseconds")
+                                .short("N")
+                                .long("nanoseconds")
+                                .help("Interpret input as nanoseconds")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("discord")
+                                .short("D")
+                                .long("discord")
+                                .help("Interpret input as a Discord ID")
+                                .group("type"))
+                            .arg(clap::Arg::with_name("twitter")
+                                .short("T")
+                                .long("twitter")
+                                .help("Interpret input as a Twitter Snowflake")
+                                .group("type"))
+                            .group(clap::ArgGroup::with_name("type")
+                                .requires("timestamp"))
                             .arg(Arg::with_name("precision")
                                 .short("p")
                                 .long("precision")
                                 .value_name("PRECISION")
-                                .help("The seconds/millis/etc precision to display.\nDefaults to displaying as much as possible.")
-                                .takes_value(true))
+                                .help("The seconds/millis/etc precision to display")
+                                .takes_value(true)
+                                .possible_values(&["seconds", "millis", "micros", "nanos", "auto"])
+                                .default_value("auto"))
                             .arg(Arg::with_name("timestamp")
                                 .value_name("TIMESTAMP")
-                                .help("The timestamp to decode.\nDefaults to current time.")
+                                .help("The timestamp to decode. Defaults to current time.")
                                 .takes_value(true))
                             .get_matches();
     
+    let ts: i64 = 0;
     
-    let ts: i64 = 1;
+    //let ts: i64 = 1;
     let _it = printit::InputType::S;
     let source = printit::TimeSource::Input(_it);
 
@@ -73,4 +109,10 @@ fn main() {
 fn split_timestamp(ts: i64, div: i64) -> (i64, u32) {
     let mul = 1_000_000_000 / div;
     (ts / div, (ts.rem_euclid(div) * mul).try_into().unwrap())
+}
+
+
+fn ts_parse_string_int(input: String) -> Result<i64, ParseIntError> {
+    let filterred: String = input.chars().filter(|x| (x != &'.')||(x != &',')).collect();
+    filterred.parse()
 }
