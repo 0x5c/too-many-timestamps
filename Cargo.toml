@@ -1,7 +1,9 @@
 [package]
 name = "too-many-timestamps"
+description = "Simple CLI tool to interpret and convert UNIX timestamps"
 version = "0.1.0"
 authors = ["0x5c <dev@0x5c.io>"]
+license = "LiLiQ-Rplus-1.1"
 edition = "2018"
 
 [[bin]]
@@ -10,5 +12,6 @@ path = "src/timestamps.rs"
 
 [dependencies]
 chrono = "0.4"
-clap = "2.33.3"
+clap = "3.0.0-beta.4"
 crossterm = "0.20.0"
+anyhow = "1.0"
