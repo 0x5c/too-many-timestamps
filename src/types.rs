@@ -78,7 +78,7 @@ pub enum Operation {
     Twitter(TwitterSnowflake),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DiscordID {
     /// ID creation time
     pub time: DT,
@@ -90,7 +90,7 @@ pub struct DiscordID {
     pub seq: u16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TwitterSnowflake {
     /// Snowflake creation time
     pub time: DT,
