@@ -11,6 +11,8 @@ use clap::{
     ArgMatches,
 };
 
+use crate::types::InputType;
+
 pub fn create_app() -> ArgMatches {
     App::new(clap::crate_name!())
             .version(clap::crate_version!())
@@ -59,3 +61,10 @@ pub fn create_app() -> ArgMatches {
                 .requires("timestamp"))
             .get_matches()
 } 
+
+pub fn find_input_type(matches: &ArgMatches) -> InputType {
+    match ["s", "m", "u", "n", "d", "t"].iter().find(|x| (matches).is_present(x)) {
+        Some(t) => InputType::from_letter(*t),
+        None    => InputType::default(),
+    }
+}
