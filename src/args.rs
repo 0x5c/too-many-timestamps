@@ -11,13 +11,15 @@ use clap::{
     ArgMatches,
 };
 
+use crate::types::InputType;
+
 pub fn create_app() -> ArgMatches {
     App::new(clap::crate_name!())
             .version(clap::crate_version!())
             .about(clap::crate_description!())
             .after_help("Copyright 2021 0x5c <dev@0x5c.io>\nReleased under the LiLiQ-Rplus-1.1 licence.")
             .override_usage("timestamps (-h | -V)\n    timestamps [[INPUT TYPE] TIMESTAMP]")
-            .setting(AppSettings::ColoredHelp)
+            //.setting(AppSettings::ColoredHelp)
             .setting(AppSettings::AllArgsOverrideSelf)
             .setting(AppSettings::DeriveDisplayOrder)
             .arg(Arg::new("timestamp")
@@ -59,3 +61,10 @@ pub fn create_app() -> ArgMatches {
                 .requires("timestamp"))
             .get_matches()
 } 
+
+pub fn find_input_type(matches: &ArgMatches) -> InputType {
+    match ["s", "m", "u", "n", "d", "t"].iter().find(|x| (matches).is_present(x)) {
+        Some(t) => InputType::from_letter(*t),
+        None    => InputType::default(),
+    }
+}

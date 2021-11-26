@@ -16,14 +16,7 @@ use chrono::{
     NaiveDateTime,
 };
 
-use crate::types::{
-    DT,
-    DiscordID,
-    TwitterSnowflake,
-};
-
-const DISCORD_EPOCH: u64 = 1420070400000;
-const TWITTER_EPOCH: u64 = 1288834974657;
+use crate::types::DT;
 
 pub fn parse_input_to_int(input: String) -> Result<i64, ParseIntError> {
     let filterred: String = input.chars().filter(|x| (x != &'.')||(x != &',')).collect();
@@ -59,29 +52,53 @@ pub fn parse_timestamp(ts: i64, split: Split) -> anyhow::Result<DT> {
     Ok(DateTime::<Utc>::from_utc(ndt, Utc))
 }
 
-pub fn parse_discord(id: u64) -> anyhow::Result<DiscordID> {
-    let ts = ((id >> 22) + DISCORD_EPOCH) as i64;
-    let (sc, ns) = split_timestamp(ts, 1_000)?;
-    let naive = match NaiveDateTime::from_timestamp_opt(sc, ns) {
-        Some(n) => n,
-        None => panic!("uh oh, discord timestamp out of range? (how???)"),
+/// Parses the timestamp component out of any ID that follows the Snowflake format
+#[macro_export]
+macro_rules! parse_snowflake_ts {
+    ($snowflake:ident, $epoch:path) => {
+        {
+            let ts = (($snowflake >> 22) + $epoch) as i64;
+            let (sc, ns) = $crate::parsing::split_timestamp(ts, 1_000)?;
+            let naive = match chrono::NaiveDateTime::from_timestamp_opt(sc, ns) {
+                Some(n) => n,
+                None => {
+                    println!("{}", "uh oh, the timestamp is out of range, which is likely a bug!\nA bug report will be appreciated :)");
+                    panic!("invalid timestamp in snowflake")
+                },
+            };
+            chrono::DateTime::<chrono::Utc>::from_utc(naive, chrono::Utc)
+        }
     };
-    let time = DateTime::<Utc>::from_utc(naive, Utc);
-    let wid = ((id & 0x3E0000) >> 17) as u8;
-    let pid = ((id & 0x1F000) >> 12) as u8;
-    let seq = (id & 0xFFF) as u16;
-    Ok(DiscordID{time, wid, pid, seq})
 }
 
-pub fn parse_twitter(snowflake: u64) -> anyhow::Result<TwitterSnowflake> {
-    let ts = ((snowflake >> 22) + TWITTER_EPOCH) as i64;
-    let (sc, ns) = split_timestamp(ts, 1_000)?;
-    let naive = match NaiveDateTime::from_timestamp_opt(sc, ns) {
-        Some(n) => n,
-        None => panic!("uh oh, twitter timestamp out of range? (how???)"),
+
+#[cfg(test)]
+mod tests {
+    use chrono::{
+        DateTime,
+        NaiveDateTime,
+        Utc,
     };
-    let time = DateTime::<Utc>::from_utc(naive, Utc);
-    let mid = ((snowflake & 0x3FF000) >> 12) as u16;
-    let seq = (snowflake & 0xFFF) as u16;
-    Ok(TwitterSnowflake{time, mid, seq})
+
+    // TODO: parse_input_to_int
+
+    // TODO: split_timestamp
+
+    // TODO: parse_timestamp
+
+    const TWITTER_EPOCH: u64 = 1288834974657;
+
+    #[test]
+    fn snowflake_ts_macro() -> anyhow::Result<()> {
+        // Actual twitter snowflake found in the wild
+        let snowflake: u64 = 1442310554454986761;
+
+        // Directly instanciating a DateTime that should be equivalent
+        let ndt = NaiveDateTime::from_timestamp_opt(1632708607, 673000000).unwrap();
+        let dt = DateTime::<Utc>::from_utc(ndt, Utc);
+
+        assert_eq!(parse_snowflake_ts!(snowflake, TWITTER_EPOCH), dt);
+
+        Ok(())
+    }
 }
