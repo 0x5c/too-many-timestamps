@@ -13,7 +13,7 @@ When run with no arguments, it prints info for the current time
 
 ### Timestamp decoding
 
-To decode a timestamp, simply provide is as argument
+To decode a timestamp, simply provide it as argument
 ```
 $ timestamps 1637906683
 ```
