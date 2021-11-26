@@ -13,5 +13,5 @@ path = "src/timestamps.rs"
 [dependencies]
 chrono = "0.4"
 clap = "3.0.0-beta.4"
-crossterm = "0.20.0"
+crossterm = "0.22"
 anyhow = "1.0"

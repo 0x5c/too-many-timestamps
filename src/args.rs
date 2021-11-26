@@ -19,7 +19,7 @@ pub fn create_app() -> ArgMatches {
             .about(clap::crate_description!())
             .after_help("Copyright 2021 0x5c <dev@0x5c.io>\nReleased under the LiLiQ-Rplus-1.1 licence.")
             .override_usage("timestamps (-h | -V)\n    timestamps [[INPUT TYPE] TIMESTAMP]")
-            .setting(AppSettings::ColoredHelp)
+            //.setting(AppSettings::ColoredHelp)
             .setting(AppSettings::AllArgsOverrideSelf)
             .setting(AppSettings::DeriveDisplayOrder)
             .arg(Arg::new("timestamp")

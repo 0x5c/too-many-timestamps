@@ -1,0 +1,47 @@
+name: QA
+
+on: [push,pull_request]
+
+jobs:
+  precheck:
+    runs-on: ubuntu-20.04
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          # skip concurrent jobs if they are on the same thing
+          concurrent_skipping: 'same_content'
+          # never skip PR + manual/scheduled runs
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+
+  cargocheck:
+    name: Cargo Check
+    needs: precheck
+    if: ${{ needs.precheck.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --all-features
+
+  tests:
+    name: Tests
+    needs: [precheck, cargocheck]
+    if: ${{ needs.precheck.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features
