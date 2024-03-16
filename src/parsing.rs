@@ -10,11 +10,7 @@ use std::{
 };
 
 use anyhow::bail;
-use chrono::{
-    Utc,
-    DateTime,
-    NaiveDateTime,
-};
+use chrono::DateTime;
 
 use crate::types::DT;
 
@@ -45,11 +41,11 @@ pub fn parse_timestamp(ts: i64, split: Split) -> anyhow::Result<DT> {
         Split::U => split_timestamp(ts, 1_000_000)?,
         Split::N => split_timestamp(ts, 1_000_000_000)?,
     };
-    let ndt = match NaiveDateTime::from_timestamp_opt(s, n) {
+    let dt = match DateTime::from_timestamp(s, n) {
         Some(n) => n,
         None => bail!("Timestamp out of range!"),
     };
-    Ok(DateTime::<Utc>::from_utc(ndt, Utc))
+    Ok(dt)
 }
 
 /// Parses the timestamp component out of any ID that follows the Snowflake format
@@ -59,14 +55,14 @@ macro_rules! parse_snowflake_ts {
         {
             let ts = (($snowflake >> 22) + $epoch) as i64;
             let (sc, ns) = $crate::parsing::split_timestamp(ts, 1_000)?;
-            let naive = match chrono::NaiveDateTime::from_timestamp_opt(sc, ns) {
+            let dt = match chrono::DateTime::from_timestamp(sc, ns) {
                 Some(n) => n,
                 None => {
                     println!("{}", "uh oh, the timestamp is out of range, which is likely a bug!\nA bug report will be appreciated :)");
                     panic!("invalid timestamp in snowflake")
                 },
             };
-            chrono::DateTime::<chrono::Utc>::from_utc(naive, chrono::Utc)
+            dt
         }
     };
 }
@@ -74,11 +70,7 @@ macro_rules! parse_snowflake_ts {
 
 #[cfg(test)]
 mod tests {
-    use chrono::{
-        DateTime,
-        NaiveDateTime,
-        Utc,
-    };
+    use chrono::DateTime;
 
     // TODO: parse_input_to_int
 
@@ -94,8 +86,7 @@ mod tests {
         let snowflake: u64 = 1442310554454986761;
 
         // Directly instanciating a DateTime that should be equivalent
-        let ndt = NaiveDateTime::from_timestamp_opt(1632708607, 673000000).unwrap();
-        let dt = DateTime::<Utc>::from_utc(ndt, Utc);
+        let dt = DateTime::from_timestamp(1632708607, 673000000).unwrap();
 
         assert_eq!(parse_snowflake_ts!(snowflake, TWITTER_EPOCH), dt);
 

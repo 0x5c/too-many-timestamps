@@ -28,9 +28,9 @@ fn main() {
 
     let matches = args::create_app();
     
-    let (op, source) = if let true = matches.is_present("timestamp") {
+    let (op, source) = if let true = matches.contains_id("timestamp") {
         let it = args::find_input_type(&matches);
-        let input = match parsing::parse_input_to_int(matches.value_of("timestamp").unwrap().into()) {
+        let input = match parsing::parse_input_to_int(matches.get_one::<String>("timestamp").unwrap().into()) {
             Ok(t) => t,
             Err(_) => {
                 eprintln!("{}", "Error: invalid input (digits only, '.,' allowed but ignored)".red());

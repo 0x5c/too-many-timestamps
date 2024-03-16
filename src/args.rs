@@ -5,57 +5,61 @@
 */
 
 use clap::{
-    App,
-    AppSettings,
+    Command,
     Arg,
     ArgMatches,
+    ArgAction,
 };
 
 use crate::types::InputType;
 
 pub fn create_app() -> ArgMatches {
-    App::new(clap::crate_name!())
+    Command::new(clap::crate_name!())
             .version(clap::crate_version!())
             .about(clap::crate_description!())
             .after_help("Copyright 2021 0x5c <dev@0x5c.io>\nReleased under the LiLiQ-Rplus-1.1 licence.")
-            .override_usage("timestamps (-h | -V)\n    timestamps [[INPUT TYPE] TIMESTAMP]")
-            //.setting(AppSettings::ColoredHelp)
-            .setting(AppSettings::AllArgsOverrideSelf)
-            .setting(AppSettings::DeriveDisplayOrder)
+            .override_usage("\n    timestamps (-h | -V)\n    timestamps [[INPUT TYPE] TIMESTAMP]")
+            .args_override_self(true)
             .arg(Arg::new("timestamp")
                 .value_name("TIMESTAMP")
-                .about("The timestamp to decode. Defaults to current time.")
-                .takes_value(true))
-            .help_heading("INPUT TYPE")
+                .help("The timestamp to decode. Defaults to current time.")
+                .num_args(0..=1))
+            .next_help_heading("Input Type")
             .arg(clap::Arg::new("s")
                 .short('S')
                 .long("seconds")
-                .about("Interpret input as seconds (the default)")
+                .help("Interpret input as seconds (the default)")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .arg(clap::Arg::new("m")
                 .short('M')
                 .long("milliseconds")
-                .about("Interpret input as milliseconds")
+                .help("Interpret input as milliseconds")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .arg(clap::Arg::new("u")
                 .short('U')
                 .long("microseconds")
-                .about("Interpret input as microseconds")
+                .help("Interpret input as microseconds")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .arg(clap::Arg::new("n")
                 .short('N')
                 .long("nanoseconds")
-                .about("Interpret input as nanoseconds")
+                .help("Interpret input as nanoseconds")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .arg(clap::Arg::new("d")
                 .short('D')
                 .long("discord")
-                .about("Interpret input as a Discord ID")
+                .help("Interpret input as a Discord ID")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .arg(clap::Arg::new("t")
                 .short('T')
                 .long("twitter")
-                .about("Interpret input as a Twitter Snowflake")
+                .help("Interpret input as a Twitter Snowflake")
+                .action(ArgAction::SetTrue)
                 .group("type"))
             .group(clap::ArgGroup::new("type")
                 .requires("timestamp"))
@@ -63,7 +67,19 @@ pub fn create_app() -> ArgMatches {
 } 
 
 pub fn find_input_type(matches: &ArgMatches) -> InputType {
-    match ["s", "m", "u", "n", "d", "t"].iter().find(|x| (matches).is_present(x)) {
+    // Iterate over all input types, find the one that is set true, if any
+    let input_type = {
+        ["s", "m", "u", "n", "d", "t"]
+        .iter()
+        .find(
+            |x| matches
+            .get_one::<bool>(x)
+            .expect("oops 47df8")
+            .to_owned()
+        )
+    };
+
+    match input_type {
         Some(t) => InputType::from_letter(*t),
         None    => InputType::default(),
     }

@@ -69,7 +69,7 @@ fn print_twitter(sf: TwitterSnowflake) {
 }
 
 fn prepare_combined_ts(time: DT) -> Option<String> {
-    let num = format!("{:0>10}", safe_timestamp_nanos(time)?.to_string());
+    let num = format!("{:0>10}", time.timestamp_nanos_opt()?.to_string());
     let (sec, txt) = num.split_at(num.len()-9);
     let (ms, txt2) = txt.split_at(3);
     let (us, ns) = txt2.split_at(3);
@@ -91,57 +91,8 @@ fn combo_ts_line(time: DT) -> String {
     }
 }
 
-fn safe_timestamp_millis(dt: DT) -> Option<i64> {
-    let as_ns = dt.timestamp().checked_mul(1_000)?;
-    as_ns.checked_add(i64::from(dt.timestamp_subsec_millis()))
-}
-
-fn safe_timestamp_micros(dt: DT) -> Option<i64> {
-    let as_ns = dt.timestamp().checked_mul(1_000_000)?;
-    as_ns.checked_add(i64::from(dt.timestamp_subsec_micros()))
-}
-
-fn safe_timestamp_nanos(dt: DT) -> Option<i64> {
-    let as_ns = dt.timestamp().checked_mul(1_000_000_000)?;
-    as_ns.checked_add(i64::from(dt.timestamp_subsec_nanos()))
-}
-
 
 #[cfg(test)]
 mod tests {
-    use chrono::{
-        DateTime,
-        NaiveDateTime,
-        Utc
-    };
-
-    use super::{
-        safe_timestamp_millis,
-        safe_timestamp_micros,
-        safe_timestamp_nanos,
-    };
-
-    #[test]
-    fn ts_millis() {
-        let ndt = NaiveDateTime::from_timestamp_opt(1632802669, 990000000).unwrap();
-        let dt = DateTime::<Utc>::from_utc(ndt, Utc);
-
-        assert_eq!(safe_timestamp_millis(dt).unwrap(), 1632802669_990);
-    }
-
-    #[test]
-    fn ts_micros() {
-        let ndt = NaiveDateTime::from_timestamp_opt(1632802669, 990574000).unwrap();
-        let dt = DateTime::<Utc>::from_utc(ndt, Utc);
-
-        assert_eq!(safe_timestamp_micros(dt).unwrap(), 1632802669_990_574);
-    }
-
-    #[test]
-    fn ts_nanos() {
-        let ndt = NaiveDateTime::from_timestamp_opt(1632802669, 990574670).unwrap();
-        let dt = DateTime::<Utc>::from_utc(ndt, Utc);
-
-        assert_eq!(safe_timestamp_nanos(dt).unwrap(), 1632802669_990_574_670);
-    }
+    // TODO: tests
 }

@@ -11,7 +11,7 @@ name = "timestamps"
 path = "src/timestamps.rs"
 
 [dependencies]
-chrono = "0.4"
-clap = "3.0.0-beta.4"
-crossterm = "0.22"
+chrono = {version = "0.4", default-features = false, features = ["std", "now"]}
+clap = {version = "4.0.0", default-features = false, features = ["std", "help", "usage", "error-context", "cargo"]}
+crossterm = {version = "0.27", default_features = false}
 anyhow = "1.0"
