@@ -32,8 +32,8 @@ fn main() {
         let it = args::find_input_type(&matches);
         let input = match parsing::parse_input_to_int(matches.get_one::<String>("timestamp").unwrap().into()) {
             Ok(t) => t,
-            Err(_) => {
-                eprintln!("{}", "Error: invalid input (digits only, '.,' allowed but ignored)".red());
+            Err(e) => {
+                eprintln!("{} {}", "Error: failed to parse timestamp/ID:".red(), format!("{e}").red());
                 std::process::exit(1);
             },
         };
