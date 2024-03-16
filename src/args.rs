@@ -1,6 +1,6 @@
 /*
     Too Many Timestamps
-    Copyright (c) 2021 0x5c
+    Copyright (c) 2021-2024 0x5c
     SPDX-License-Identifier: LiLiQ-Rplus-1.1
 */
 
@@ -17,7 +17,7 @@ pub fn create_app() -> ArgMatches {
     Command::new(clap::crate_name!())
             .version(clap::crate_version!())
             .about(clap::crate_description!())
-            .after_help("Copyright 2021 0x5c <dev@0x5c.io>\nReleased under the LiLiQ-Rplus-1.1 licence.")
+            .after_help("Copyright 2021-2024 0x5c <dev@0x5c.io>\nReleased under the LiLiQ-Rplus-1.1 licence.")
             .override_usage("\n    timestamps (-h | -V)\n    timestamps [[INPUT TYPE] TIMESTAMP]")
             .args_override_self(true)
             .arg(Arg::new("timestamp")

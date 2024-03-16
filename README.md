@@ -47,7 +47,7 @@ To install, copy the binary wherever you want on the system, and optionally inst
 
 ## Copyright
 
-Copyright (C) 2021 0x5c
+Copyright (C) 2021-2024 0x5c
 
 This program is released under the terms of the *Québec Free and Open-Source Licence – Strong Reciprocity (LiLiQ-R+)*, version 1.1.  
 See [`LICENCE`](LICENCE) for full license text (Français / English).

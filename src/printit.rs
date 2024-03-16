@@ -1,6 +1,6 @@
 /*
     Too Many Timestamps
-    Copyright (c) 2021 0x5c
+    Copyright (c) 2021-2024 0x5c
     SPDX-License-Identifier: LiLiQ-Rplus-1.1
 */
 
